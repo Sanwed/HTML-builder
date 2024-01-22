@@ -5,9 +5,10 @@ const destPath = path.join(__dirname, 'project-dist', 'bundle.css');
 
 function bundleStyles(srcPath, destPath) {
   const styles = [];
-
-  try {
-    const files = fs.readdirSync(srcPath);
+  fs.readdir(srcPath, (err, files) => {
+    if (err) {
+      console.error(err.message);
+    }
     const stylesFiles = files.filter((file) => {
       const filePath = path.join(srcPath, file);
       const fileExt = path.extname(filePath);
@@ -18,11 +19,9 @@ function bundleStyles(srcPath, destPath) {
       const filePath = path.join(srcPath, file);
       const fileData = fs.readFileSync(filePath);
       styles.push(fileData);
+      fs.writeFile(destPath, styles.join('\n'), () => {});
     });
-    fs.writeFileSync(destPath, styles.join('\n'));
-  } catch (err) {
-    console.log(err.message);
-  }
+  });
 }
 
 bundleStyles(srcPath, destPath);
