@@ -20,8 +20,6 @@ fs.readdir(path.join(__dirname, 'secret-folder'), (err, files) => {
         console.log(
           `${fileName}-${path.extname(file).slice(1)}-${fileSize.toFixed(3)}kb`,
         );
-      } else {
-        console.error(`${file} is not a file`);
       }
     });
   });

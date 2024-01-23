@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const { exists } = require('node:fs');
 
 const srcFolder = path.join(__dirname, 'files');
 const destFolder = path.join(__dirname, 'files-copy');
@@ -9,7 +8,23 @@ fs.mkdir(destFolder, () => {
   console.log('Folder created');
 });
 
+function clearDir(srcFolder) {
+  fs.readdir(srcFolder, (err, files) => {
+    if (err) {
+      console.error(err.message);
+    }
+    files.forEach((file) => {
+      fs.unlink(path.join(srcFolder, file), (err) => {
+        if (err) {
+          console.error(err.message);
+        }
+      });
+    });
+  });
+}
+
 function copyDir(srcFolder, destFolder) {
+  clearDir(destFolder);
   fs.readdir(srcFolder, (err, files) => {
     if (err) {
       console.error(err.message);
@@ -34,5 +49,6 @@ function copyDir(srcFolder, destFolder) {
     });
   });
 }
+
 copyDir(srcFolder, destFolder);
 module.exports = copyDir;

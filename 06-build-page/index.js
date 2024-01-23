@@ -1,6 +1,5 @@
 const path = require('path');
 const fs = require('fs');
-const copyDir = require('../04-copy-directory/index');
 const bundleStyles = require('../05-merge-styles/index');
 
 const templatePath = path.join(__dirname, 'template.html');

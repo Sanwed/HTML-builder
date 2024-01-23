@@ -17,9 +17,13 @@ function bundleStyles(srcPath, destPath) {
 
     stylesFiles.forEach((file) => {
       const filePath = path.join(srcPath, file);
-      const fileData = fs.readFileSync(filePath);
-      styles.push(fileData);
-      fs.writeFile(destPath, styles.join('\n'), () => {});
+      fs.readFile(filePath, (err, data) => {
+        if (err) {
+          console.error(err.message);
+        }
+        styles.push(data.toString());
+        fs.writeFile(destPath, styles.join('\n'), () => {});
+      });
     });
   });
 }
