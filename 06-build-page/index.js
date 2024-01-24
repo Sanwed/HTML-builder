@@ -1,6 +1,5 @@
 const path = require('path');
 const fs = require('fs');
-const bundleStyles = require('../05-merge-styles/index');
 
 const templatePath = path.join(__dirname, 'template.html');
 const assetsFolder = path.join(__dirname, 'assets');
@@ -36,22 +35,15 @@ fs.readFile(templatePath, (err, mainData) => {
   });
 });
 
-bundleStyles(stylesFolder, path.join(dest, 'style.css'));
-
-fs.mkdir(path.join(dest, 'assets'), () => {
-  console.log('Assets Folder created');
-});
-
 function copyAssets(src, dest) {
+  fs.mkdir(path.join(dest), () => {});
   fs.readdir(src, (err, files) => {
     if (err) {
       console.error(err.message);
     }
-    fs.mkdir(dest, () => {});
     files.forEach((file) => {
       const srcPath = path.join(src, file);
       const destPath = path.join(dest, file);
-
       fs.stat(srcPath, (err, stats) => {
         if (err) {
           console.error(err.message);
@@ -59,7 +51,12 @@ function copyAssets(src, dest) {
         if (stats.isDirectory()) {
           copyAssets(srcPath, destPath);
         } else {
-          fs.copyFile(srcPath, destPath, () => {});
+          fs.readFile(srcPath, (err, data) => {
+            if (err) {
+              console.error(err.message);
+            }
+            fs.writeFile(destPath, data, () => {});
+          });
         }
       });
     });
@@ -67,3 +64,30 @@ function copyAssets(src, dest) {
 }
 
 copyAssets(assetsFolder, path.join(dest, 'assets'));
+
+function bundleStyles(srcPath, destPath) {
+  const styles = [];
+  fs.readdir(srcPath, (err, files) => {
+    if (err) {
+      console.error(err.message);
+    }
+    const stylesFiles = files.filter((file) => {
+      const filePath = path.join(srcPath, file);
+      const fileExt = path.extname(filePath);
+      return fileExt === '.css';
+    });
+
+    stylesFiles.forEach((file) => {
+      const filePath = path.join(srcPath, file);
+      fs.readFile(filePath, (err, data) => {
+        if (err) {
+          console.error(err.message);
+        }
+        styles.push(data.toString());
+        fs.writeFile(destPath, styles.join('\n'), () => {});
+      });
+    });
+  });
+}
+
+bundleStyles(stylesFolder, path.join(dest, 'style.css'));

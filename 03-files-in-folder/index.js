@@ -16,10 +16,9 @@ fs.readdir(path.join(__dirname, 'secret-folder'), (err, files) => {
 
       if (stats.isFile()) {
         const fileSize = stats.size / 1024;
+        const fileName = file.split('.')[0];
         console.log(
-          `${path.basename(file)}-${path
-            .extname(file)
-            .slice(1)}-${fileSize.toFixed(3)}kb`,
+          `${fileName}-${path.extname(file).slice(1)}-${fileSize.toFixed(3)}kb`,
         );
       }
     });

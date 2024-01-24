@@ -14,9 +14,19 @@ function clearDir(srcFolder) {
       console.error(err.message);
     }
     files.forEach((file) => {
-      fs.unlink(path.join(srcFolder, file), (err) => {
+      fs.stat(path.join(srcFolder, file), (err, stats) => {
         if (err) {
           console.error(err.message);
+        }
+        if (stats.isFile()) {
+          fs.unlink(path.join(srcFolder, file), (err) => {
+            if (err) {
+              console.error(err.message);
+            }
+          });
+        }
+        if (stats.isDirectory()) {
+          fs.rmdir(path.join(srcFolder, file), () => {});
         }
       });
     });
